@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clément CAPLIEZ--DIEZ - Portfolio 8-Bit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            --bg-color: #0d0d0d;
+            --text-color: #39ff14;
+            --accent-color: #ff007f;
+            --border-color: #e0e0e0;
+            --box-bg: #1a1a1a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            overflow-wrap: break-word;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Press Start 2P', monospace;
+            line-height: 1.6;
+            font-size: 10px;
+            overflow-x: hidden;
+        }
+
+        /* ==========================================================================
+           2. EFFETS DE FOND (CANVAS MATRIX & CRT SCANLINES)
+           ========================================================================== */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           3. COMPOSANTS RPG (BOXES)
+           ========================================================================== */
+        .rpg-box {
+            background-color: rgba(26, 26, 26, 0.95);
+            border: 4px solid var(--border-color);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 4px 4px 0px #000, inset 2px 2px 0px rgba(255,255,255,0.2);
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            z-index: 5;
+        }
+
+        .rpg-box.fade-in { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+
+        .rpg-box::before, .rpg-box::after {
+            content: '';
+            position: absolute;
+            width: 8px; height: 8px;
+            background: var(--bg-color);
+        }
+        .rpg-box::before { top: -4px; left: -4px; box-shadow: calc(100% + 4px) 0 0 var(--bg-color); }
+        .rpg-box::after { bottom: -4px; right: -4px; box-shadow: calc(-100% - 4px) 0 0 var(--bg-color); }
+
+        /* ==========================================================================
+           4. TYPOGRAPHIE & LIGNES POINTILLÉES ANIMÉES
+           ========================================================================== */
+        h1, h2, h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px #000;
+        }
+        h1 { font-size: 1.2rem; text-align: center; }
+        
+        h2 { 
+            font-size: 1rem; 
+            padding-bottom: 0.8rem; 
+            position: relative;
+            overflow: hidden; 
+        }
+
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-image: linear-gradient(to right, var(--text-color) 50%, transparent 50%);
+            background-size: 16px 2px;
+            animation: scroll-dots 0.8s linear infinite;
+        }
+
+        @keyframes scroll-dots {
+            from { background-position: 0 0; }
+            to { background-position: 16px 0; } 
+        }
+        
+        h3 { font-size: 0.8rem; color: #ffeb3b; margin-top: 1rem; }
+        p, li { margin-bottom: 0.8rem; }
+        ul { list-style-type: none; padding-left: 0; }
+        li::before { content: "> "; color: var(--accent-color); }
+        
+        a { color: #00ffff; text-decoration: none; transition: 0.1s; position: relative; z-index: 10; }
+        a:hover { background: #00ffff; color: #000; }
+
+        .info-tag { font-size: 8px; color: #fff; margin-bottom: 5px; display: block; }
+
+        h1:hover, h2:hover { cursor: crosshair; }
+
+        /* ==========================================================================
+           5. BARRES DE COMPÉTENCES
+           ========================================================================== */
+        .skill { margin-bottom: 1rem; }
+        .skill-name { display: flex; justify-content: space-between; font-size: 8px; margin-bottom: 0.3rem; }
+        .skill-bar { width: 100%; height: 12px; border: 2px solid var(--text-color); background: #000; }
+        
+        .skill-fill { 
+            height: 100%; 
+            background: var(--text-color); 
+            width: 0%; 
+        }
+
+        /* ==========================================================================
+           6. START SCREEN & ANIMATIONS
+           ========================================================================== */
+        #start-screen {
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; position: relative; z-index: 10;
+        }
+        
+        #start-btn {
+            background: transparent; color: var(--text-color); font-family: inherit;
+            font-size: 1.5rem; border: none; cursor: pointer; animation: blink 1s infinite; position: relative; z-index: 10;
+        }
+        
+        #password-container {
+            display: none;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-top: 0rem;
+        }
+        
+        .access-granted {
+            color: #fff !important;
+            text-shadow: 0 0 5px #fff, 0 0 10px #39ff14;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .typewriter-text { display: inline; white-space: pre-wrap; }
+        .typewriter-text::after {
+            content: '█'; color: var(--accent-color);
+            margin-left: 4px; animation: blink-caret .75s step-end infinite;
+        }
+        
+        @keyframes blink-caret { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* ==========================================================================
+           7. LAYOUT, RESPONSIVE & AVATAR PIXEL-ANIMÉ
+           ========================================================================== */
+        #game-container { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; display: none; position: relative; z-index: 5; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+
+        .avatar-container {
+            position: relative;
+            width: 140px;
+            border: 4px solid var(--border-color);
+            box-shadow: 4px 4px 0px #000;
+            overflow: hidden;
+            flex-shrink: 0;
+            image-rendering: pixelated; 
+        }
+
+        .avatar-bg {
+            display: block;
+            width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+        }
+
+        .avatar-character {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            image-rendering: pixelated;
+            transform-origin: bottom center; 
+            animation: breathe-pixel 2s step-end infinite; 
+        }
+
+        @keyframes breathe-pixel {
+            0%   { transform: scaleY(1); }
+            15%  { transform: scaleY(1.01); }
+            30%  { transform: scaleY(1.02); }
+            45%  { transform: scaleY(1.03); } 
+            60%  { transform: scaleY(1.02); }
+            75%  { transform: scaleY(1.01); }
+            90%  { transform: scaleY(1); }
+            100% { transform: scaleY(1); }
+        }
+
+        /* AJUSTEMENT MOBILE : centrage horizontal */
+        @media (max-width: 767px) {
+            .header-flex { 
+                flex-direction: column !important; 
+                align-items: center !important; 
+                text-align: center !important; 
+            }
+            .avatar-container { 
+                margin: 0 auto 1.5rem auto !important; 
+            }
+            .header-text { width: 100%; }
+            #objective-text { text-align: center !important; }
+            
+            /* Supprime l'espace géant entre les colonnes de l'inventaire */
+            .inventaire-grid {
+                gap: 0;
+            }
+
+            /* NOUVEAU : Réduit et centre le mot de passe sur téléphone */
+            #password-container {
+                font-size: 0.8rem; /* Plus petit pour tenir sur l'écran */
+                text-align: center;
+                margin-top: 0rem;
+            }
+        }
+
+        /* AJUSTEMENT PC : centrage vertical à gauche */
+        @media (min-width: 768px) {
+            .header-flex { 
+                flex-direction: row; 
+                align-items: center; /* Centre verticalement par rapport au texte */
+                text-align: left; 
+                display: flex; 
+            }
+            .avatar-container { 
+                margin-right: 2rem; 
+                margin-bottom: 0; 
+            }
+            .header-text { flex: 1; }
+            #objective-text { text-align: left !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-bg"></canvas>
+
+    <div id="start-screen">
+        <h1 style="color: var(--text-color); margin-bottom: 2rem; position: relative; z-index: 10;">PORTFOLIO OS v1.0</h1>
+        <button id="start-btn">> PRESS START <</button>
+        <div id="password-container">
+            <span id="password-prompt">Enter Password: </span><span id="password-input"></span><span id="password-cursor" class="typewriter-text" style="display:none;"></span>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <header class="rpg-box full-width fade-in">
+            <div class="header-flex">
+                <div class="avatar-container">
+                    <img src="img/defense_8bits.jpg" alt="Background La Défense" class="avatar-bg">
+                    <img src="img/perso8bits.png" alt="Clément 8-bit" class="avatar-character">
+                </div>
+
+                <div class="header-text">
+                    <h1>Clément Capliez--Diez</h1>
+                    <h2 style="border:none; color:#fff;">Apprenti Ingénieur Informatique (Cycle 2026-2029)</h2>
+                    <p class="info-tag">Level: 23 ans | Range: Occitanie / PACA / AURA</p>
+                    <p id="objective-text"></p>
+                </div>
+            </div>
+        </header>
+
+        <main class="grid">
+            <section class="rpg-box">
+                <h2>STATISTIQUES</h2>
+                <h3>Langues</h3>
+                <div class="skill">
+                    <div class="skill-name"><span>Anglais (B2 - Professionnel)</span><span>85%</span></div>
+                    <div class="skill-bar"><div class="skill-fill" data-level="85%"></div></div>
+                </div>
+                <h3>Langages Informatiques</h3>
+                <div class="skill">
+                    <div class="skill-name"><span>Python, Bash, Powershell</span><span>70%</span></div>
+                    <div class="skill-bar"><div class="skill-fill" data-level="70%"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name"><span>JavaScript, PHP</span><span>50%</span></div>
+                    <div class="skill-bar"><div class="skill-fill" data-level="50%"></div></div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name"><span>C, SQL</span><span>30%</span></div>
+                    <div class="skill-bar"><div class="skill-fill" data-level="30%"></div></div>
+                </div>
+                <h3>Compétences</h3>
+                <ul>
+                    <li>Automatisation / Scripting</li>
+                    <li>Gestion / Sécurisation Infra Réseau</li>
+                    <li>Fortinet, Cisco</li>
+                    <li>Linux, Windows Server, ESXi, Proxmox</li>
+                    <li>Git, Docker</li>
+                    <li>Veille technologique & CTF</li>
+                </ul>
+                <h3>Passifs</h3>
+                <ul>
+                    <li>Capacité d'adaptation</li>
+                    <li>Résolution de problèmes</li>
+                    <li>Travail en équipe & Autonomie</li>
+                    <li>Gestion du stress & Organisation</li>
+                </ul>
+            </section>
+
+            <section class="rpg-box">
+                <h2>QUÊTES PRINCIPALES</h2>
+                <h3>[01/2025 - 02/2025] Stagiaire infra IT</h3>
+                <p><strong>Phytocontrol</strong> 📍 Nîmes<br><br>
+                - VLAN switch Cisco, Pare-feu FortiGate<br>
+                - Template Windows Server sur ESXi</p>
+                <h3>[05/2024 - 06/2024] Stagiaire service IT</h3>
+                <p><strong>École Nationale de Police</strong> 📍 Nîmes<br><br>
+                - Serveur Xibo, Dossiers partagés Windows Server<br>
+                - Déploiement postes via MDT</p>
+                <h3>[02/2021 - 05/2022] Employé polyvalent</h3>
+                <p><strong>KFC</strong> 📍 Nîmes</p>
+            </section>
+
+            <section class="rpg-box">
+                <h2>TUTORIELS</h2>
+                <h3>[01/2026] HTB Certified Penetration Testing Specialist</h3>
+                <p>HTB Academy 📍 Distanciel<br><em>(En cours)</em></p>
+                <h3>[09/2025 - 12/2025] Ingénieur Informatique en Alternance</h3>
+                <p>3iL Ingénieurs 📍 Rodez<br><em>(Interrompu - Manque de contrat)</em></p>
+                <h3>[09/2023 - 07/2025] BTS SIO SISR</h3>
+                <p>Lycée CCI Gard 📍 Nîmes<br><strong>(Major de l'Académie de Montpellier)</strong></p>
+                <h3>[09/2019 - 01/2021] Licence Info-Com</h3>
+                <p>Université Paul Valéry 📍 Montpellier<br><em>(Interrompu - COVID-19)</em></p>
+            </section>
+
+            <section class="rpg-box">
+                <h2>QUÊTES SECONDAIRES</h2>
+                <ul>
+                    <li>Homelabbing</li>
+                    <li>Jeux vidéo</li>
+                    <li>Musique</li>
+                    <li>Musculation</li>
+                </ul>
+            </section>
+
+            <footer class="rpg-box full-width">
+                <h2>INVENTAIRE</h2>
+                <div class="grid inventaire-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div>
+                        <p>📧 <a href="mailto:capliezdiez.clement@gmail.com">Mail</a></p>
+                        <p>🔗 <a href="https://linkedin.com/in/clementcapliezdiez" target="_blank">LinkedIn</a></p>
+                        <p>📞 <a href="tel:+33781079558">Tel</a></p>
+                    </div>
+                    <div>
+                        <p>📜 <a href="docs/CV_Clement_Capliez_Diez.pdf" download>CV</a></p>
+                        <p>🚗 Permis B</p>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+   <script>
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        const matrixChars = '01';
+        const fontSize = 12; 
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = [];
+        for (let x = 0; x < columns; x++) { drops[x] = 1; }
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(13, 13, 13, 0.1)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(57, 255, 20, 0.2)'; ctx.font = fontSize + 'px "Press Start 2P", monospace'; 
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) { drops[i] = 0; }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('start-btn');
+            const startScreen = document.getElementById('start-screen');
+            const gameContainer = document.getElementById('game-container');
+            const objectiveTextContainer = document.getElementById('objective-text');
+            const rpgBoxes = document.querySelectorAll('.rpg-box');
+            const pwdContainer = document.getElementById('password-container');
+            const pwdInput = document.getElementById('password-input');
+            const pwdCursor = document.getElementById('password-cursor');
+            const pwdPrompt = document.getElementById('password-prompt');
+            const objectiveString = "Futur ingénieur informatique et détenteur d'un BTS SIO en tant que Major de l'Académie de Montpellier, je recherche une alternance de 3 ans en cybersécurité / réseau / systèmes / DevOps. Fort de solides bases techniques, mon objectif est de mettre mes compétences au service de vos infrastructures tout en développant une expertise de pointe pour sécuriser vos services critiques.";
+            let i = 0;
+
+            function playSelectSound() {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const playBip = (delay, pitch, duration) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(pitch, audioCtx.currentTime + delay);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + delay + duration);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + delay);
+                    osc.stop(audioCtx.currentTime + delay + duration);
+                };
+                return () => playBip(0, 800, 0.05); 
+            }
+
+            function playSuccessSound() {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const playBip = (delay, pitch, duration) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(pitch, audioCtx.currentTime + delay);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + delay + duration);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + delay);
+                    osc.stop(audioCtx.currentTime + delay + duration);
+                };
+                playBip(0, 440, 0.1); playBip(0.1, 554, 0.1); playBip(0.2, 659, 0.3); 
+            }
+
+            // --- SON ZELDA POUR LES LIENS ---
+            function playLinkSound() {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const playBip = (delay, pitch, duration) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square'; 
+                    osc.frequency.setValueAtTime(pitch, audioCtx.currentTime + delay);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + delay + duration);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + delay);
+                    osc.stop(audioCtx.currentTime + delay + duration);
+                };
+                playBip(0, 440, 0.08); 
+                playBip(0.04, 1760, 0.12);
+            }
+
+            // --- NOUVEAU : ÉCOUTEUR DE CLICS POUR LES LIENS ---
+            document.addEventListener('click', (e) => {
+                // Vérifie si l'élément cliqué est un lien (<a>) ou se trouve à l'intérieur d'un lien
+                if (e.target.tagName === 'A' || e.target.closest('a')) {
+                    playLinkSound();
+                }
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const fills = entry.target.querySelectorAll('.skill-fill');
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                        fills.forEach(fill => { fill.style.transition = 'none'; fill.style.width = '0%'; });
+                        setTimeout(() => {
+                            fills.forEach(fill => {
+                                fill.style.transition = 'width 1.5s steps(20)';
+                                fill.style.width = fill.getAttribute('data-level');
+                            });
+                        }, 50);
+                    } else {
+                        entry.target.classList.remove('fade-in');
+                        fills.forEach(fill => { fill.style.transition = 'none'; fill.style.width = "0%"; });
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            startBtn.addEventListener('click', () => {
+                const typeSound = playSelectSound();
+                typeSound();
+                startBtn.style.display = 'none';
+                pwdContainer.style.display = 'block';
+                pwdCursor.style.display = 'inline';
+                let pwdLength = 0;
+                const maxPwdLength = 8; 
+                function typePassword() {
+                    if (pwdLength < maxPwdLength) {
+                        pwdInput.innerHTML += '*'; pwdLength++; typeSound(); 
+                        setTimeout(typePassword, Math.random() * 150 + 50);
+                    } else {
+                        setTimeout(() => {
+                            pwdPrompt.innerHTML = '';
+                            pwdInput.innerHTML = '[ACCESS GRANTED]';
+                            pwdInput.classList.add('access-granted');
+                            pwdCursor.style.display = 'none';
+                            playSuccessSound();
+                            setTimeout(() => {
+                                startScreen.style.display = 'none';
+                                gameContainer.style.display = 'block';
+                                objectiveTextContainer.innerHTML = '';
+                                objectiveTextContainer.classList.add('typewriter-text');
+                                function typeWriterObj() {
+                                    if (i < objectiveString.length) {
+                                        objectiveTextContainer.innerHTML += objectiveString.charAt(i); i++;
+                                        setTimeout(typeWriterObj, 15);
+                                    } else { objectiveTextContainer.classList.remove('typewriter-text'); }
+                                }
+                                setTimeout(typeWriterObj, 500);
+                                rpgBoxes.forEach(box => observer.observe(box));
+                            }, 1000);
+                        }, 400); 
+                    }
+                }
+                setTimeout(typePassword, 300);
+            });
+        });
+    </script>
+</body>
+</html>
