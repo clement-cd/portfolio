@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clément Capliez-Diez</title>
+    <title>Clément Capliez--Diez</title>
     <link rel="icon" type="image/png" href="img/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
@@ -17,7 +17,7 @@
             --accent-color: #ff007f;
             --border-color: #e0e0e0;
             --box-bg: #1a1a1a;
-            --label-color: #ffeb3b; /* Variable ajoutée pour la couleur jaune des labels */
+            --label-color: #ffeb3b; 
         }
 
         * {
@@ -31,7 +31,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Press Start 2P', monospace;
-            line-height: 1.6;
+            line-height: 1.8;
             font-size: 10px;
             overflow-x: hidden;
         }
@@ -53,7 +53,10 @@
             content: " ";
             display: block;
             position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
+            top: 0; 
+            left: 0; 
+            bottom: 0; 
+            right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
                         linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             z-index: 2;
@@ -66,7 +69,7 @@
            ========================================================================== */
         h1, h2, h3 {
             color: var(--accent-color);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             text-shadow: 2px 2px #000;
         }
         
@@ -77,9 +80,10 @@
         
         h2 { 
             font-size: 1rem; 
-            padding-bottom: 0.8rem; 
+            padding-bottom: 1.2rem; 
             position: relative;
             overflow: hidden; 
+            margin-bottom: 2.5rem;
         }
 
         h2::after {
@@ -102,10 +106,11 @@
         h3 { 
             font-size: 0.8rem; 
             color: var(--label-color); 
-            margin-top: 1rem; 
+            margin-top: 2.5rem; 
+            margin-bottom: 1.2rem;
         }
         
-        p, li { margin-bottom: 0.8rem; }
+        p, li { margin-bottom: 1.2rem; }
         ul { list-style-type: none; padding-left: 0; }
         li::before { content: "> "; color: var(--accent-color); }
         
@@ -125,7 +130,7 @@
         .info-tag { 
             font-size: 8px; 
             color: #fff; 
-            margin-bottom: 5px; 
+            margin-bottom: 1rem; 
             display: block; 
         }
 
@@ -153,7 +158,6 @@
             background: var(--box-bg); 
         }
 
-        /* Animation Auto */
         .glitch-auto::before {
             left: 3px;
             text-shadow: -2px 0 var(--accent-color);
@@ -165,7 +169,6 @@
             animation: glitch-loop-2 2s infinite linear alternate-reverse;
         }
 
-        /* Animation au Survol */
         .glitch-hover:hover::before {
             opacity: 1;
             left: 2px;
@@ -179,7 +182,6 @@
             animation: glitch-anim-2 1s infinite linear alternate-reverse;
         }
 
-        /* Keyframes Auto */
         @keyframes glitch-loop-1 {
             0%, 90% { opacity: 0; clip-path: inset(0 0 0 0); }
             91% { opacity: 1; clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
@@ -198,7 +200,6 @@
             100% { opacity: 0; transform: translate(0); }
         }
 
-        /* Keyframes Hover */
         @keyframes glitch-anim-1 {
             0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
             20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
@@ -223,7 +224,7 @@
         #game-container { 
             max-width: 1000px; 
             margin: 0 auto; 
-            padding: 2rem 1rem; 
+            padding: 3rem 1.5rem; 
             display: none; 
             position: relative; 
             z-index: 5; 
@@ -232,20 +233,24 @@
         .grid { 
             display: grid; 
             grid-template-columns: 1fr; 
-            gap: 1.5rem; 
+            gap: 4rem; 
         }
 
         .rpg-box {
             background-color: rgba(26, 26, 26, 0.95);
             border: 4px solid var(--border-color);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            padding: 2.5rem;
+            margin-bottom: 0; 
             box-shadow: 4px 4px 0px #000, inset 2px 2px 0px rgba(255,255,255,0.2);
             position: relative;
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.5s ease-out, transform 0.5s ease-out;
             z-index: 5;
+        }
+
+        header.rpg-box {
+            margin-bottom: 4rem; 
         }
 
         .rpg-box.fade-in { 
@@ -256,7 +261,8 @@
         .rpg-box::before, .rpg-box::after {
             content: '';
             position: absolute;
-            width: 8px; height: 8px;
+            width: 8px; 
+            height: 8px;
             background: var(--bg-color);
         }
         
@@ -279,13 +285,58 @@
             display: flex;
         }
 
+        .avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        .cat-sprite {
+            position: absolute;
+            bottom: 45%; 
+            right: -8%; 
+            width: 70%; 
+            image-rendering: pixelated; 
+            z-index: 10;
+            animation: breathe-pixel 2.5s step-end infinite; 
+        }
+
+        .sleeping-zs {
+            position: absolute;
+            bottom: 105%; 
+            right: 52%; 
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; 
+            pointer-events: none;
+            z-index: 11;
+            font-family: 'Press Start 2P', monospace;
+            color: #a8e6ff; 
+            text-shadow: 1px 1px #000;
+            image-rendering: pixelated;
+        }
+
+        .sleeping-zs span {
+            opacity: 0; 
+            animation: sleep-zs-float 3s linear infinite;
+            display: block; 
+        }
+
+        .sleeping-zs span:nth-child(2) { animation-delay: 0s; font-size: 6px; margin-bottom: 3px; }
+        .sleeping-zs span:nth-child(1) { animation-delay: 1s; font-size: 6px; margin-bottom: 3px; }
+
+        @keyframes sleep-zs-float {
+            0% { opacity: 0; transform: translateY(0) scale(1); }
+            10% { opacity: 1; transform: translateY(-2px) scale(1); }
+            100% { opacity: 0; transform: translateY(-10px) scale(1.1) translateX(5px); }
+        }
+
         .avatar-container {
             position: relative;
             width: 140px;
             border: 4px solid var(--border-color);
             box-shadow: 4px 4px 0px #000;
             overflow: hidden;
-            flex-shrink: 0;
             image-rendering: pixelated; 
         }
 
@@ -301,7 +352,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 95%;
             object-fit: cover;
             image-rendering: pixelated;
             transform-origin: bottom center; 
@@ -318,13 +369,13 @@
         /* ==========================================================================
            7. BARRES DE COMPÉTENCES
            ========================================================================== */
-        .skill { margin-bottom: 1rem; }
+        .skill { margin-bottom: 1.8rem; }
         
         .skill-name { 
             display: flex; 
             justify-content: space-between; 
             font-size: 8px; 
-            margin-bottom: 0.3rem; 
+            margin-bottom: 0.6rem; 
         }
         
         .skill-bar { 
@@ -403,14 +454,14 @@
            9. FORMULAIRE DE CONTACT
            ========================================================================== */
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             display: flex;
             flex-direction: column;
         }
 
         .form-group label {
             color: var(--label-color);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             font-size: 0.8rem;
         }
 
@@ -420,7 +471,7 @@
             border: 2px solid var(--border-color);
             color: var(--text-color);
             font-family: 'Press Start 2P', monospace;
-            padding: 0.8rem;
+            padding: 1rem; 
             font-size: 0.8rem;
             outline: none;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -430,7 +481,7 @@
 
         .form-group textarea {
             resize: vertical; 
-            min-height: 100px;
+            min-height: 120px;
         }
 
         .form-group input::placeholder, 
@@ -450,12 +501,12 @@
             font-family: inherit;
             font-size: 1rem;
             border: 2px solid var(--text-color);
-            padding: 1rem;
+            padding: 1.2rem;
             cursor: pointer;
             width: 100%;
             transition: background-color 0.2s, color 0.2s;
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
         }
 
         .btn-submit:hover {
@@ -465,9 +516,9 @@
 
         .name-inputs {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem; 
             width: 100%;
-            margin-bottom: 1.5rem; 
+            margin-bottom: 2rem; 
         }
 
         .split-group {
@@ -479,13 +530,16 @@
            10. MEDIA QUERIES (RESPONSIVE)
            ========================================================================== */
         @media (max-width: 767px) {
+            .rpg-box {
+                padding: 2rem 1.5rem; 
+            }
             .header-flex { 
                 flex-direction: column; 
                 align-items: center; 
                 text-align: center; 
             }
-            .avatar-container { 
-                margin: 0 auto 1.5rem auto; 
+            .avatar-wrapper { 
+                margin: 2rem auto 2rem auto; 
             }
             .header-text { width: 100%; }
             #objective-text { text-align: center; }
@@ -496,7 +550,7 @@
             }
             .name-inputs {
                 flex-direction: column;
-                gap: 1.5rem;
+                gap: 2rem;
             }
         }
 
@@ -506,8 +560,8 @@
                 align-items: center; 
                 text-align: left; 
             }
-            .avatar-container { 
-                margin-right: 2rem; 
+            .avatar-wrapper { 
+                margin-right: 3rem; 
                 margin-bottom: 0; 
             }
             .header-text { flex: 1; }
@@ -521,7 +575,7 @@
 
     <div id="start-screen">
         <h1 style="color: var(--text-color); margin-bottom: 2rem; position: relative; z-index: 10;">
-            <span class="glitch-auto" data-text="PORTFOLIO OS v1.0">PORTFOLIO OS v1.0</span>
+            <span class="glitch-auto" data-text="PORTFOLIO OS v2.0">PORTFOLIO OS v2.0</span>
         </h1>
         <button id="start-btn">> PRESS START <</button>
         <div id="password-container">
@@ -532,9 +586,19 @@
     <div id="game-container">
         <header class="rpg-box full-width fade-in">
             <div class="header-flex">
-                <div class="avatar-container">
-                    <img src="img/defense_8bits.jpg" alt="Background La Défense" class="avatar-bg">
-                    <img src="img/perso8bits.png" alt="Clément 8-bit" class="avatar-character">
+                
+                <div class="avatar-wrapper">
+                    <img src="img/cat.png" alt="cat" class="cat-sprite">
+                    
+                    <div class="sleeping-zs">
+                        <span>Z</span>
+                        <span>Z</span>
+                    </div>
+
+                    <div class="avatar-container">
+                        <img src="img/bedroom.jpg" alt="bedroom" class="avatar-bg">
+                        <img src="img/character.png" alt="character" class="avatar-character">
+                    </div>
                 </div>
 
                 <div class="header-text">
@@ -549,11 +613,13 @@
         <main class="grid">
             <section class="rpg-box">
                 <h2><span class="glitch-hover" data-text="STATISTIQUES">STATISTIQUES</span></h2>
+                
                 <h3>Langues</h3>
                 <div class="skill">
                     <div class="skill-name"><span>Anglais (B2 - Professionnel)</span><span>85%</span></div>
                     <div class="skill-bar"><div class="skill-fill" data-level="85%"></div></div>
                 </div>
+                
                 <h3>Langages Informatiques</h3>
                 <div class="skill">
                     <div class="skill-name"><span>Python, Bash, Powershell</span><span>70%</span></div>
@@ -567,6 +633,7 @@
                     <div class="skill-name"><span>C, SQL</span><span>30%</span></div>
                     <div class="skill-bar"><div class="skill-fill" data-level="30%"></div></div>
                 </div>
+                
                 <h3>Compétences</h3>
                 <ul>
                     <li>Automatisation / Scripting</li>
@@ -576,6 +643,7 @@
                     <li>Git, Docker</li>
                     <li>Veille technologique & CTF</li>
                 </ul>
+                
                 <h3>Passifs</h3>
                 <ul>
                     <li>Capacité d'adaptation</li>
@@ -587,30 +655,38 @@
 
             <section class="rpg-box">
                 <h2><span class="glitch-hover" data-text="QUÊTES PRINCIPALES">QUÊTES PRINCIPALES</span></h2>               
+                
                 <h3>[01/2025 - 02/2025] Stagiaire infra IT</h3>
                 <p><strong>Phytocontrol</strong> 📍 Nîmes<br><br>
                 - Mise en place de VLAN sur switch Cisco<br>
                 - Élaboration de règles sur pare-feu FortiGate<br>
                 - Création de template Windows Server sur hyperviseur ESXi</p>
+                
                 <h3>[05/2024 - 06/2024] Stagiaire service IT</h3>
                 <p><strong>École Nationale de Police</strong> 📍 Nîmes<br><br>
                 - Mise en production d’un serveur Xibo<br>
                 - Mise à disposition d’un dossier partagé via Windows Server<br>
                 - Déploiement de postes via MDT</p>
+                
                 <h3>[02/2021 - 05/2022] Employé polyvalent</h3>
                 <p><strong>KFC</strong> 📍 Nîmes</p>
             </section>
 
             <section class="rpg-box">
                 <h2><span class="glitch-hover" data-text="TUTORIELS">TUTORIELS</span></h2>
+                
                 <h3>[01/2026] HTB Certified Penetration Testing Specialist</h3>
                 <p>HTB Academy 📍 Distanciel<br><em>(En cours)</em></p>
+                
                 <h3>[09/2025 - 12/2025] Ingénieur Informatique en Alternance</h3>
                 <p>3iL Ingénieurs 📍 Rodez<br><em>(Interrompu - Manque de contrat)</em></p>
+                
                 <h3>[09/2023 - 07/2025] BTS SIO SISR</h3>
                 <p>Lycée CCI Gard 📍 Nîmes<br><em>(Major de l'Académie de Montpellier)</em></p>
+                
                 <h3>[09/2019 - 01/2021] Licence Info-Com</h3>
                 <p>Université Paul Valéry 📍 Montpellier<br><em>(Interrompu - COVID-19)</em></p>
+                
                 <h3>[09/2016 - 07/2019] BAC Scientifique</h3>
                 <p>Lycée Philippe Lamour 📍 Nîmes<br><em>(Spécialité mathématiques)</em></p>
             </section>
@@ -668,7 +744,7 @@
         </main>
     </div>
 
-   <script>
+    <script>
         // ==========================================================================
         // 1. GESTION DU FOND MATRICE
         // ==========================================================================
@@ -702,7 +778,14 @@
             }
         }
 
-        window.addEventListener('resize', initMatrix);
+        let lastWidth = window.innerWidth;
+        window.addEventListener('resize', () => {
+            if (window.innerWidth !== lastWidth) {
+                lastWidth = window.innerWidth;
+                initMatrix();
+            }
+        });
+        
         initMatrix();
         setInterval(drawMatrix, 50);
 
@@ -710,7 +793,6 @@
         // 2. LOGIQUE PRINCIPALE DE L'APPLICATION
         // ==========================================================================
         document.addEventListener('DOMContentLoaded', () => {
-            // Sélecteurs DOM
             const startBtn = document.getElementById('start-btn');
             const startScreen = document.getElementById('start-screen');
             const gameContainer = document.getElementById('game-container');
@@ -722,10 +804,7 @@
             const pwdPrompt = document.getElementById('password-prompt');
             const contactForm = document.getElementById('contact-form');
 
-            // Données
-            const objectiveString = "Futur ingénieur informatique et détenteur d'un BTS SIO en tant que Major de l'Académie de Montpellier, je recherche une alternance de 3 ans en Cybersécurité / Réseaux / Systèmes / DevOps / Cloud. Fort de solides bases techniques, mon objectif est de mettre mes compétences au service de vos infrastructures tout en développant une expertise de pointe pour sécuriser vos services critiques.";
-            
-            // Paramètres
+            const objectiveString = "Futur ingénieur informatique et détenteur d'un BTS SIO en tant que Major de l'Académie de Montpellier, je recherche une alternance de 3 ans en cybersécurité / réseau / systèmes / DevOps. Fort de solides bases techniques, mon objectif est de mettre mes compétences au service de vos infrastructures tout en développant une expertise de pointe pour sécuriser vos services critiques.";
             const MAX_PWD_LENGTH = 8;
             
             // --- UTILITAIRES AUDIO ---
@@ -734,30 +813,32 @@
             const playOscillator = (delay, pitch, duration) => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
+                
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(pitch, audioCtx.currentTime + delay);
+                
                 gain.gain.setValueAtTime(0.05, audioCtx.currentTime + delay);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + delay + duration);
+                
                 osc.connect(gain); 
                 gain.connect(audioCtx.destination);
+                
                 osc.start(audioCtx.currentTime + delay);
                 osc.stop(audioCtx.currentTime + delay + duration);
             };
 
             const playTypeSound = () => playOscillator(0, 800, 0.05);
-            
+            const playLinkSound = () => {
+                playOscillator(0, 440, 0.08); 
+                playOscillator(0.04, 1760, 0.12);
+            };
             const playSuccessSound = () => {
                 playOscillator(0, 440, 0.1); 
                 playOscillator(0.1, 554, 0.1); 
                 playOscillator(0.2, 659, 0.3); 
             };
-            
-            const playLinkSound = () => {
-                playOscillator(0, 440, 0.08); 
-                playOscillator(0.04, 1760, 0.12);
-            };
 
-            // --- ANIMATIONS ET EFFETS VISUELS ---
+            // --- ANIMATIONS VISUELLES & OBSERVER ---
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const fills = entry.target.querySelectorAll('.skill-fill');
@@ -767,11 +848,10 @@
                             fill.style.transition = 'none'; 
                             fill.style.width = '0%'; 
                         });
-                        // Requiert un petit délai pour que la transition se relance proprement
                         setTimeout(() => {
                             fills.forEach(fill => {
                                 fill.style.transition = 'width 1.5s steps(20)';
-                                fill.style.width = fill.dataset.level; // Utilisation de dataset au lieu de getAttribute
+                                fill.style.width = fill.dataset.level; 
                             });
                         }, 50);
                     } else {
@@ -801,23 +881,19 @@
                 setTimeout(typeWriterObj, 500);
             };
 
-            // --- GESTION DES ÉVÉNEMENTS ---
-
-            // Événement global pour les liens (Son)
+            // --- GESTION DES EVENEMENTS ---
             document.addEventListener('click', (e) => {
                 if (e.target.closest('a')) {
                     playLinkSound();
                 }
             });
 
-            // Séquence de démarrage
             startBtn.addEventListener('click', () => {
-                // Initialisation AudioContext au premier clic utilisateur (requis par les navigateurs)
-                if(audioCtx.state === 'suspended') {
+                if (audioCtx.state === 'suspended') {
                     audioCtx.resume();
                 }
                 
-                playTypeSound();
+                playLinkSound();
                 startBtn.style.display = 'none';
                 pwdContainer.style.display = 'block';
                 pwdCursor.style.display = 'inline';
@@ -850,16 +926,15 @@
                 setTimeout(typePassword, 300);
             });
 
-            // Formulaire de contact Formspree
-            if(contactForm) {
+            if (contactForm) {
                 contactForm.addEventListener('submit', async (e) => {
                     e.preventDefault(); 
+                    playLinkSound();
                     
                     const btn = contactForm.querySelector('.btn-submit');
                     const originalBtnText = "> TRANSMETTRE LE PAQUET <";
                     
                     btn.innerHTML = "[ TRANSMISSION EN COURS... ]";
-                    
                     const formData = new FormData(contactForm);
 
                     try {
@@ -899,4 +974,3 @@
     </script>
 </body>
 </html>
-
